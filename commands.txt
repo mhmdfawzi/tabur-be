@@ -1,0 +1,7 @@
+/* kill port */
+sudo lsof -i :<PortNumber>
+kill -9 <PID>
+
+
+/* run docker compose */
+docker-compose up --build
