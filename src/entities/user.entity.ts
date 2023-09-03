@@ -2,12 +2,12 @@ import {
   BeforeInsert,
   Column,
   Entity,
-  JoinColumn,
-  OneToOne,
+  // JoinColumn,
+  // OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Role } from './role.entity';
+// import { Role } from './role.entity';
 
 @Entity()
 export class User {
@@ -25,10 +25,12 @@ export class User {
   createdDate: Date;
   @Column({ nullable: false, default: false })
   isDeleted: boolean;
+  @Column({ nullable: false })
+  role: string;
 
-  @OneToOne(() => Role)
-  @JoinColumn()
-  role: Role;
+  // @OneToOne(() => Role)
+  // @JoinColumn()
+  // role: Role;
 
   @BeforeInsert()
   async hashPassword() {

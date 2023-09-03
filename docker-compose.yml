@@ -12,6 +12,7 @@ services:
       - POSTGRES_DB=testDB
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      #- POSTGRES_PASSWORD: postgres
 
   adminer:
     image: adminer

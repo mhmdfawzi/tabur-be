@@ -1,7 +1,10 @@
 /* kill port */
 sudo lsof -i :<PortNumber>
-kill -9 <PID>
+sudo kill -9 <PID>
 
 
 /* run docker compose */
 docker-compose up --build
+
+/* run the project */
+npm run start:dev
