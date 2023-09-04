@@ -119,7 +119,7 @@ RUN npm install --legacy-peer-deps --force
 COPY . .
 
 # Construye la aplicación
-RUN npm build
+RUN npm run build
 
 # ---
 
