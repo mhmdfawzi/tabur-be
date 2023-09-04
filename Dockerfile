@@ -76,22 +76,74 @@
 # CMD [ "node", "run", "start:dev" ]
 
 # Base image
-FROM node:16
+# FROM node:16
 
-# Create app directory
+# # Create app directory
+# WORKDIR /usr/src/app
+
+# # A wildcard is used to ensure both package.json AND package-lock.json are copied
+# COPY package*.json ./
+
+# # Install app dependencies
+# RUN npm install --legacy-peer-deps --force
+
+# # Bundle app source
+# COPY . .
+
+# # Creates a "dist" folder with the production build
+# RUN npm run build
+
+# # Start the server using the production build
+# CMD [ "node", "dist/main.js" ]
+
+ARG NODE_VERSION=16.20.0
+ARG NODE_ENV=build
+ARG APP_PORT=3000
+ARG IMAGE_NAME=tabur-be-docker
+
+# Utiliza una versión ligera de Node.js como imagen base
+FROM node:${NODE_VERSION}-alpine as builder
+# Establece la variable de entorno NODE_ENV a partir del ARG
+ENV NODE_ENV=${NODE_ENV}
+
+# Define el directorio de trabajo en el contenedor
 WORKDIR /usr/src/app
 
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
+# Copia los archivos package.json y yarn.lock al contenedor
 COPY package*.json ./
 
-# Install app dependencies
+# Instala las dependencias del proyecto utilizando Yarn
 RUN npm install --legacy-peer-deps --force
 
-# Bundle app source
+# Copia el resto del código del proyecto al contenedor
 COPY . .
 
-# Creates a "dist" folder with the production build
-RUN npm run build
+# Construye la aplicación
+RUN npm build
 
-# Start the server using the production build
-CMD [ "node", "dist/main.js" ]
+# ---
+
+# Comienza una nueva etapa para reducir el tamaño de la imagen final
+FROM node:${NODE_VERSION}-alpine
+# Información sobre la imagen, con el valor de la etiqueta name parametrizado
+LABEL name=${IMAGE_NAME}
+
+# Define un usuario sin privilegios para ejecutar la aplicación
+USER node
+# Define el directorio de trabajo en el contenedor
+WORKDIR /usr/src/app
+
+# Copia los archivos y directorios desde la etapa de construcción
+COPY --from=builder /usr/src/app/package*.json ./
+COPY --from=builder /usr/src/app/node_modules/ ./node_modules/
+COPY --from=builder /usr/src/app/dist ./dist
+
+# Expone el puerto que usa la aplicación
+EXPOSE ${APP_PORT}
+# Define el comando para iniciar la aplicación
+CMD ["npm","run", "start"]
+
+# Define un healthcheck para verificar la salud de la aplicación
+# Dependiendo de la configuración de tu aplicación, necesitarás ajustar este comando
+# Aquí se asume que tu aplicación tiene un endpoint GET /v1/health/liveness que devuelve un código de estado 200 si está en funcionamiento
+# HEALTHCHECK CMD curl --fail http://localhost:${APP_PORT}/v1/health/liveness || exit 1
