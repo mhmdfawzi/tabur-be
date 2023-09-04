@@ -141,7 +141,7 @@ COPY --from=builder /usr/src/app/dist ./dist
 # Expone el puerto que usa la aplicación
 EXPOSE ${APP_PORT}
 # Define el comando para iniciar la aplicación
-CMD ["npm","run", "start"]
+CMD ["node","dist/src/main"]
 
 # Define un healthcheck para verificar la salud de la aplicación
 # Dependiendo de la configuración de tu aplicación, necesitarás ajustar este comando
