@@ -11,18 +11,28 @@ import config from 'ormconfig';
 import { ProviderModule } from './modules/provider/provider.module';
 import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
-
+import { ConfigModule } from '@nestjs/config';
+import { PostgresDBConfigService } from './PostgresDBConfigService';
 @Module({
   imports: [
     UserModule,
-    TypeOrmModule.forRoot(config),
+    TypeOrmModule.forRootAsync({
+      useClass: PostgresDBConfigService,
+      imports: [ConfigModule],
+    }),
     AuthModule,
     RoleModule,
     CategoryModule,
     ProviderModule,
     AutomapperModule.forRoot({ strategyInitializer: classes() }),
+    ConfigModule.forRoot(),
   ],
   controllers: [AppController],
+
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log('config', config);
+  }
+}
