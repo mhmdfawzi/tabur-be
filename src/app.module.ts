@@ -11,6 +11,8 @@ import { AutomapperModule } from '@automapper/nestjs';
 import { classes } from '@automapper/classes';
 import { ConfigModule } from '@nestjs/config';
 import { PostgresDBConfigService } from 'src/postgresDBConfig.Service';
+import { TransformDataInterceptor } from './interceptors/transformData.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 @Module({
   imports: [
     UserModule,
@@ -27,6 +29,17 @@ import { PostgresDBConfigService } from 'src/postgresDBConfig.Service';
     ConfigModule.forRoot({ isGlobal: true }),
   ],
   controllers: [AppController],
-  providers: [AppService, PostgresDBConfigService],
+  providers: [
+    AppService,
+    PostgresDBConfigService,
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: TransformDataInterceptor,
+    },
+  ],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log(PostgresDBConfigService);
+  }
+}

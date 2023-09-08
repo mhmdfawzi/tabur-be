@@ -26,6 +26,12 @@ export class UserService {
     return await this.userRepo.findOne({ where: { email: userName } });
   }
 
+  async findOneWithRefreshToken(hashedRefreshToken: string) {
+    return await this.userRepo.findOne({
+      where: { refreshToken: hashedRefreshToken },
+    });
+  }
+
   async createUser(createUserDto: CreateUserDto, role: string) {
     const user = await this.userRepo.create({
       ...createUserDto,

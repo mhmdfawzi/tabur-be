@@ -10,18 +10,29 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
-    console.log(process.env.NODE_ENV);
-    return {
-      type: 'postgres',
-      database: this.configService.get<string>('DATABASE_NAME') || 'testDB',
-      host: this.configService.get<string>('DATABASE_HOST') || 'localhost',
-      port: this.configService.get<number>('DATABASE_PORT') || 5432,
-      username:
-        this.configService.get<string>('DATABASE_USERNAME') || 'postgres',
-      password:
-        this.configService.get<string>('DATABASE_PASSWORD') || 'postgres',
-      entities: [User, Role, Category, Provider],
-      synchronize: true,
-    };
+    console.log(process.env.npm_lifecycle_event);
+    if (process.env.npm_lifecycle_event === 'start:dev') {
+      return {
+        type: 'postgres',
+        database: 'testDB',
+        host: 'localhost',
+        port: 5432,
+        username: 'postgres',
+        password: 'postgres',
+        entities: [User, Role, Category, Provider],
+        synchronize: true,
+      };
+    } else {
+      return {
+        type: 'postgres',
+        database: this.configService.get<string>('DATABASE_NAME'),
+        host: this.configService.get<string>('DATABASE_HOST'),
+        port: this.configService.get<number>('DATABASE_PORT'),
+        username: this.configService.get<string>('DATABASE_USERNAME'),
+        password: this.configService.get<string>('DATABASE_PASSWORD'),
+        entities: [User, Role, Category, Provider],
+        synchronize: true,
+      };
+    }
   }
 }

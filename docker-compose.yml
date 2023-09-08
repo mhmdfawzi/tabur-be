@@ -20,16 +20,16 @@ services:
     ports:
       - 8080:8080
 
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: iqueue-be
-    environment:
-      - PORT=${PORT}
-    ports:
-      - '3000:3000'
-    depends_on:
-      - db
-    volumes:
-      - /usr/app/node_modules
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   container_name: iqueue-be
+  #   environment:
+  #     - PORT=${PORT}
+  #   ports:
+  #     - '3000:3000'
+  #   depends_on:
+  #     - db
+  #   volumes:
+  #     - /usr/app/node_modules

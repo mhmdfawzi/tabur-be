@@ -6,18 +6,21 @@ import {
   Param,
   // Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { UpdateUserDto } from '../../dtos/userDto';
 import { UserService } from './user.service';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
-// import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Get('all')
+  @ApiSecurity('JWT-auth')
   getAll() {
     return this.userService.findUsers();
   }

@@ -38,4 +38,39 @@ export class UpdateUserDto {
   @IsPhoneNumber()
   @ApiProperty()
   phone: string;
+
+  @IsString()
+  // @ApiProperty()
+  refreshToken: string;
+}
+
+export class CreateLoginDto {
+  @IsString()
+  @ApiProperty()
+  username: string;
+  @IsString()
+  @ApiProperty()
+  password: string;
+}
+
+export class TokenPayload {
+  username: string;
+  fullname: string;
+  //id: number;
+  role: string;
+  sub: number;
+}
+
+export class JwtPayload {
+  username: string;
+  sub: number;
+}
+
+export class LoginResultDto {
+  token: string;
+  refreshToken: string;
+}
+
+export class RefreshTokenDto {
+  refresh_token: string;
 }

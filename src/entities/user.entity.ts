@@ -27,7 +27,8 @@ export class User {
   isDeleted: boolean;
   @Column({ nullable: false })
   role: string;
-
+  @Column({ nullable: true })
+  refreshToken: string;
   // @OneToOne(() => Role)
   // @JoinColumn()
   // role: Role;
