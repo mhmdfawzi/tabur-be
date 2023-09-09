@@ -18,6 +18,18 @@ export class ProviderService {
     @InjectMapper() private readonly classMapper: Mapper,
   ) {}
 
+  // for client user
+  async list(): Promise<ProviderViewDto[]> {
+    return await this.classMapper.mapArrayAsync(
+      await this.providerRepo.find({
+        where: { isDeleted: false },
+      }),
+      Provider,
+      ProviderViewDto,
+    );
+  }
+
+  // for admin user
   async getAll(): Promise<ProviderViewDto[]> {
     return await this.classMapper.mapArrayAsync(
       await this.providerRepo.find({
@@ -33,7 +45,7 @@ export class ProviderService {
     );
   }
 
-  async getById(id: number) {
+  async getById(id: number): Promise<ProviderViewDto> {
     return await this.classMapper.mapAsync(
       await this.providerRepo.findOne({
         where: { id: id },
@@ -48,7 +60,7 @@ export class ProviderService {
     );
   }
 
-  async create(provider: ProviderDto) {
+  async create(provider: ProviderDto): Promise<ProviderDto> {
     const entity = this.classMapper.map(provider, ProviderDto, Provider);
     return this.classMapper.mapAsync(
       await this.providerRepo.save(entity),
@@ -56,18 +68,24 @@ export class ProviderService {
       ProviderDto,
     );
   }
-  async update(id: number, provider: ProviderUpdateDto) {
+  async update(id: number, provider: ProviderUpdateDto): Promise<boolean> {
     const entity = this.classMapper.map(provider, ProviderUpdateDto, Provider);
-    return await this.providerRepo.update(id, entity);
+    const updateResult = await this.providerRepo.update(id, entity);
+    if (updateResult.affected) {
+      return true;
+    }
+    return false;
   }
-  async remove(id: number) {
+
+  async toggle(id: number, isDeleted: boolean): Promise<boolean> {
     const provider = await this.providerRepo.findOne({ where: { id: id } });
     if (provider) {
-      provider.isDeleted = true;
-      await this.providerRepo.update(id, provider);
-      return true;
-    } else {
-      return false;
+      provider.isDeleted = isDeleted;
+      const updateResult = await this.providerRepo.update(id, provider);
+      if (updateResult.affected) {
+        return true;
+      }
     }
+    return false;
   }
 }

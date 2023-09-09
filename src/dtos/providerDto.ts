@@ -45,7 +45,7 @@ export class ProviderDto {
 
   @AutoMap()
   @IsPhoneNumber()
-  @ApiProperty()
+  @ApiProperty({ nullable: false, uniqueItems: true })
   phone: string;
 
   @AutoMap()
