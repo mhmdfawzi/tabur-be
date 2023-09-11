@@ -2,11 +2,14 @@ import {
   BeforeInsert,
   Column,
   Entity,
+  JoinColumn,
+  ManyToOne,
   // JoinColumn,
   // OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Reservation } from './reservation.entity';
 // import { Role } from './role.entity';
 
 @Entity()
@@ -32,6 +35,10 @@ export class User {
   // @OneToOne(() => Role)
   // @JoinColumn()
   // role: Role;
+
+  @ManyToOne(() => Reservation, (reservation) => reservation.reserver)
+  @JoinColumn()
+  reservation: Reservation;
 
   @BeforeInsert()
   async hashPassword() {

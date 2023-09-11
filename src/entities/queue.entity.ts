@@ -6,11 +6,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Provider } from './provider.entity';
+import { Reservation } from './reservation.entity';
 
 @Entity()
 export class Queue {
@@ -49,7 +51,7 @@ export class Queue {
   @AutoMap()
   isActive: boolean;
 
-  @OneToOne(() => User)
+  @ManyToOne(() => User)
   @JoinColumn()
   createdBy: User;
 
@@ -60,6 +62,9 @@ export class Queue {
   @OneToOne(() => User)
   @JoinColumn()
   manager: User;
+
+  @OneToMany(() => Reservation, (reservation) => reservation.queue)
+  reservations: Reservation[];
 
   @BeforeInsert()
   async setCreatedDate() {

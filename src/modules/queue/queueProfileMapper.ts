@@ -23,7 +23,7 @@ export class QueueProfileMapper extends AutomapperProfile {
         mapper,
         Queue,
         QueueDto,
-        forMember((dest) => dest.id, ignore()),
+        // forMember((dest) => dest.id, ignore()),
         forMember(
           (destination) => destination.manager,
           mapFrom((source) => source.manager),
