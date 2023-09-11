@@ -1,11 +1,12 @@
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReservationDto } from 'src/dtos/reservationDto';
 import { Reservation } from 'src/entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { CreateReservationDto } from '../../dtos/reservationDto';
+import { QueueService } from '../queue/queue.service';
 
 @Injectable()
 export class ReservationService {
@@ -13,6 +14,9 @@ export class ReservationService {
     @InjectRepository(Reservation)
     private readonly reservationRepo: Repository<Reservation>,
     @InjectMapper() private readonly classMapper: Mapper,
+
+    @Inject(QueueService)
+    private readonly _queueService: QueueService,
   ) {}
 
   // for client user
@@ -55,20 +59,36 @@ export class ReservationService {
     );
   }
 
-  async create(provider: CreateReservationDto): Promise<ReservationDto> {
+  async create(reservation: CreateReservationDto): Promise<ReservationDto> {
     const entity = this.classMapper.map(
-      provider,
+      reservation,
       CreateReservationDto,
       Reservation,
     );
-    return this.classMapper.mapAsync(
+    const reservationResult = this.classMapper.mapAsync(
       await this.reservationRepo.save(entity),
       Reservation,
       ReservationDto,
     );
+    const queueResult = await this._queueService.syncAddingReservationToQueue(
+      reservation.queueId,
+    );
+    if (queueResult) {
+      return reservationResult;
+    } else {
+      await this.reservationRepo.delete((await reservationResult).id);
+      throw new HttpException(
+        'Please try again later',
+        HttpStatus.NOT_ACCEPTABLE,
+      );
+    }
   }
-  async update(id: number, provider: ReservationDto): Promise<boolean> {
-    const entity = this.classMapper.map(provider, ReservationDto, Reservation);
+  async update(id: number, reservation: ReservationDto): Promise<boolean> {
+    const entity = this.classMapper.map(
+      reservation,
+      ReservationDto,
+      Reservation,
+    );
     const updateResult = await this.reservationRepo.update(id, entity);
     if (updateResult.affected) {
       return true;
@@ -77,10 +97,12 @@ export class ReservationService {
   }
 
   async toggle(id: number, isDeleted: boolean): Promise<boolean> {
-    const provider = await this.reservationRepo.findOne({ where: { id: id } });
-    if (provider) {
-      provider.isCancelled = isDeleted;
-      const updateResult = await this.reservationRepo.update(id, provider);
+    const reservation = await this.reservationRepo.findOne({
+      where: { id: id },
+    });
+    if (reservation) {
+      reservation.isCancelled = isDeleted;
+      const updateResult = await this.reservationRepo.update(id, reservation);
       if (updateResult.affected) {
         return true;
       }

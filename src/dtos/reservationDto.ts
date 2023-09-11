@@ -22,6 +22,9 @@ export class ReservationDto {
 
   @AutoMap()
   queue: QueueDto;
+
+  @AutoMap()
+  isServed: boolean;
 }
 
 export class CreateReservationDto {

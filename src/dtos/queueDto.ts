@@ -3,6 +3,7 @@ import { IsNumber, IsString } from 'class-validator';
 import { AutoMap } from '@automapper/classes';
 import { UserDto } from './userDto';
 import { ProviderViewDto } from './providerDto';
+import { ReservationDto } from './reservationDto';
 
 export class QueueDto {
   @AutoMap()
@@ -32,6 +33,9 @@ export class QueueDto {
   bookCount: number;
 
   @AutoMap()
+  waitingCount: number;
+
+  @AutoMap()
   isActive: boolean;
 
   @AutoMap()
@@ -42,6 +46,9 @@ export class QueueDto {
 
   @AutoMap()
   manager: UserDto;
+
+  @AutoMap()
+  reservations: ReservationDto[];
 }
 
 export class CreateQueueDto {
@@ -82,6 +89,9 @@ export class ViewQueueDto {
   @AutoMap()
   bookCount: number;
 
+  @AutoMap()
+  waitingCount: number;
+  
   @AutoMap()
   isActive: boolean;
 

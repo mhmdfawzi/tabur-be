@@ -47,6 +47,10 @@ export class Queue {
   @AutoMap()
   bookCount: number;
 
+  @Column({ nullable: false, default: 0 })
+  @AutoMap()
+  waitingCount: number;
+
   @Column({ nullable: false, default: false })
   @AutoMap()
   isActive: boolean;

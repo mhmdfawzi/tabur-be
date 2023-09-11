@@ -10,5 +10,6 @@ import { QueueProfileMapper } from './queueProfileMapper';
   imports: [TypeOrmModule.forFeature([Queue])],
   controllers: [QueueController],
   providers: [QueueService, QueueProfileMapper],
+  exports: [QueueService],
 })
 export class QueueModule {}

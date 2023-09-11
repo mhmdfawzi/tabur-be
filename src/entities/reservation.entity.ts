@@ -28,13 +28,16 @@ export class Reservation {
   @Column({ nullable: false, default: false })
   isCancelled: boolean;
 
-  @Column({ nullable: false, default: new Date() })
+  @Column({ nullable: true, default: null })
   @AutoMap()
   cancelationDate: Date;
 
   @ManyToOne(() => Queue, (queue) => queue.reservations)
   @JoinColumn()
   queue: Queue;
+
+  @Column({ nullable: false, default: false })
+  isServed: boolean;
 
   @BeforeInsert()
   async setCreatedDate() {

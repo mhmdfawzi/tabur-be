@@ -36,6 +36,10 @@ export class QueueProfileMapper extends AutomapperProfile {
           (destination) => destination.createdBy,
           mapFrom((source) => source.createdBy),
         ),
+        forMember(
+          (destination) => destination.reservations,
+          mapFrom((source) => source.reservations),
+        ),
       );
 
       createMap(
