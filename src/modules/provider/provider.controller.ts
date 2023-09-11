@@ -25,6 +25,12 @@ export class ProviderController {
     return this._providerService.list();
   }
 
+  @Get(':id/queues')
+  @Public()
+  getProviderQueues(@Param('id') id: number) {
+    return this._providerService.getProviderQueues(id);
+  }
+
   @Get('all')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')

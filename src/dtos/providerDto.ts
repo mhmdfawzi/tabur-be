@@ -3,6 +3,7 @@ import { IsString, IsPhoneNumber, IsNumber, IsBoolean } from 'class-validator';
 import { AutoMap } from '@automapper/classes';
 import { UserDto } from './userDto';
 import { CategoryDto } from './categoryDto';
+import { ViewQueueDto } from './queueDto';
 
 export class ProviderDto {
   @AutoMap()
@@ -168,4 +169,18 @@ export class ProviderViewDto {
 
   @AutoMap()
   workingHours: string;
+
+  @AutoMap()
+  queues: ViewQueueDto[];
+}
+
+export class ProviderWithQueuesDto {
+  @AutoMap()
+  id!: number | null;
+
+  @AutoMap()
+  name: string;
+
+  @AutoMap()
+  queues: ViewQueueDto[];
 }

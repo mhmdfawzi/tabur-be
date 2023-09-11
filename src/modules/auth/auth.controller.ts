@@ -56,6 +56,7 @@ export class AuthController {
   }
 
   @Post('register/owner')
+  @Public()
   @ApiOperation({ summary: 'to add an owner user' })
   @ApiBody({ type: CreateUserDto, required: true })
   async registerOwnerUser(@Body() createUserDto: CreateUserDto) {
@@ -63,6 +64,7 @@ export class AuthController {
   }
 
   @Post('register/manager')
+  @Public()
   @ApiOperation({ summary: 'to add a manager user' })
   @ApiBody({ type: CreateUserDto, required: true })
   async registerManagerUser(@Body() createUserDto: CreateUserDto) {

@@ -15,6 +15,7 @@ import {
   ProviderDto,
   ProviderUpdateDto,
   ProviderViewDto,
+  ProviderWithQueuesDto,
 } from 'src/dtos/providerDto';
 
 @Injectable()
@@ -76,6 +77,10 @@ export class ProviderProfileMapper extends AutomapperProfile {
           (destination) => destination.createdBy,
           mapFrom((source) => source.createdBy),
         ),
+        forMember(
+          (destination) => destination.queues,
+          mapFrom((source) => source.queues),
+        ),
       );
 
       createMap(mapper, Provider, ProviderUpdateDto);
@@ -86,6 +91,18 @@ export class ProviderProfileMapper extends AutomapperProfile {
         Provider,
         forMember((dest) => dest.id, ignore()),
       );
+
+      createMap(
+        mapper,
+        Provider,
+        ProviderWithQueuesDto,
+        forMember(
+          (destination) => destination.queues,
+          mapFrom((source) => source.queues),
+        ),
+      );
+
+      createMap(mapper, ProviderWithQueuesDto, Provider);
     };
   }
 }

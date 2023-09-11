@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { PostgresDBConfigService } from 'src/postgresDBConfig.Service';
 import { TransformDataInterceptor } from './interceptors/transformData.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
+import { QueueModule } from './modules/queue/queue.module';
 @Module({
   imports: [
     UserModule,
@@ -25,6 +26,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
     RoleModule,
     CategoryModule,
     ProviderModule,
+    QueueModule,
     AutomapperModule.forRoot({ strategyInitializer: classes() }),
     ConfigModule.forRoot({ isGlobal: true }),
   ],

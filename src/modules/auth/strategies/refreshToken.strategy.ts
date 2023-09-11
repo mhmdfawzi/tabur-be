@@ -96,7 +96,7 @@ import { PassportStrategy } from '@nestjs/passport';
 import { Injectable } from '@nestjs/common';
 import { Request } from 'express';
 import { AuthService } from '../auth.service';
-import { jwtConstants } from 'src/modules/constants/constants';
+import { jwtConstants } from 'src/constants/constants';
 import { TokenPayload } from 'src/dtos/userDto';
 
 @Injectable()

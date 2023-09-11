@@ -11,7 +11,7 @@ import { User } from 'src/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { LoginResultDto, TokenPayload } from 'src/dtos/userDto';
 import { CreateLoginDto } from '../../dtos/userDto';
-import { jwtConstants } from '../constants/constants';
+import { jwtConstants } from '../../constants/constants';
 @Injectable()
 export class AuthService {
   constructor(

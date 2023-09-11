@@ -6,6 +6,7 @@ import {
   ProviderDto,
   ProviderUpdateDto,
   ProviderViewDto,
+  ProviderWithQueuesDto,
 } from 'src/dtos/providerDto';
 import { Provider } from 'src/entities/provider.entity';
 import { Repository } from 'typeorm';
@@ -87,5 +88,20 @@ export class ProviderService {
       }
     }
     return false;
+  }
+
+  // business functionality
+  // get service provider queues
+  async getProviderQueues(id: number): Promise<ProviderWithQueuesDto> {
+    return await this.classMapper.mapAsync(
+      await this.providerRepo.findOne({
+        where: { id: id },
+        relations: {
+          queues: true,
+        },
+      }),
+      Provider,
+      ProviderWithQueuesDto,
+    );
   }
 }

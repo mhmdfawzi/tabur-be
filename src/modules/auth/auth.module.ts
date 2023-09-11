@@ -10,7 +10,7 @@ import { User } from 'src/entities/user.entity';
 // import { RefreshJwtStrategy } from './strategies/refreshToken.strategy';
 // import { APP_GUARD } from '@nestjs/core';
 // import { AuthGuard } from './guards/authGuard';
-import { jwtConstants } from '../constants/constants';
+import { jwtConstants } from '../../constants/constants';
 // import { RolesGuard } from './guards/roleGuard';
 import { PassportModule } from '@nestjs/passport';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';

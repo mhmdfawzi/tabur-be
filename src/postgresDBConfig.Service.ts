@@ -3,8 +3,8 @@ import { ConfigService } from '@nestjs/config';
 import { TypeOrmModuleOptions, TypeOrmOptionsFactory } from '@nestjs/typeorm';
 import { Category } from 'src/entities/category.entity';
 import { Provider } from 'src/entities/provider.entity';
-import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/user.entity';
+import { Queue } from './entities/queue.entity';
 @Injectable()
 export class PostgresDBConfigService implements TypeOrmOptionsFactory {
   constructor(private configService: ConfigService) {}
@@ -19,7 +19,7 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
         port: 5432,
         username: 'postgres',
         password: 'postgres',
-        entities: [User, Role, Category, Provider],
+        entities: [User, Category, Provider, Queue],
         synchronize: true,
       };
     } else {
@@ -30,7 +30,7 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
         port: this.configService.get<number>('DATABASE_PORT'),
         username: this.configService.get<string>('DATABASE_USERNAME'),
         password: this.configService.get<string>('DATABASE_PASSWORD'),
-        entities: [User, Role, Category, Provider],
+        entities: [User, Category, Provider, Queue],
         synchronize: true,
       };
     }

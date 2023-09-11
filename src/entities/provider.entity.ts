@@ -4,12 +4,14 @@ import {
   JoinColumn,
   PrimaryGeneratedColumn,
   OneToOne,
+  OneToMany,
   // Index,
   // Point,
 } from 'typeorm';
 import { User } from './user.entity';
 import { Category } from './category.entity';
 import { AutoMap } from '@automapper/classes';
+import { Queue } from './queue.entity';
 
 @Entity()
 export class Provider {
@@ -90,4 +92,7 @@ export class Provider {
   @OneToOne(() => User)
   @JoinColumn()
   createdBy: User;
+
+  @OneToMany(() => Queue, (queue) => queue.serviceProvider)
+  queues: Queue[];
 }
