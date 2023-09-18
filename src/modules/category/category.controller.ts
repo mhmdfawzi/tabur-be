@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { CategoryDto } from '../../dtos/categoryDto';
-import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { Public } from '../auth/decorators/public.decorator';
 
@@ -19,13 +19,19 @@ import { Public } from '../auth/decorators/public.decorator';
 export class CategoryController {
   constructor(private readonly _categoryService: CategoryService) {}
 
-  @Get('list')
   @Public()
+  @Get('list')
+  @ApiOperation({
+    summary: 'to get all categories for customer/client',
+  })
   list() {
     return this._categoryService.getAllIgnoringDeleted();
   }
 
   @Get('all')
+  @ApiOperation({
+    summary: 'to get all categories for admin user',
+  })
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
   getAll() {
@@ -35,6 +41,9 @@ export class CategoryController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to get specific category info',
+  })
   getById(@Param('id') id: number) {
     return this._categoryService.getById(id);
   }
@@ -42,6 +51,9 @@ export class CategoryController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to create a category',
+  })
   create(@Body() _category: CategoryDto) {
     return this._categoryService.create(_category);
   }
@@ -49,6 +61,9 @@ export class CategoryController {
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to update a category',
+  })
   update(@Param('id') id: number, @Body() _category: CategoryDto) {
     return this._categoryService.update(id, _category);
   }
@@ -56,14 +71,20 @@ export class CategoryController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to make soft delete for a category',
+  })
   delete(@Param('id') id: number) {
     return this._categoryService.toggle(id, true);
   }
 
-  @Put('enable/:id')
+  @Put('undoDelete/:id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
-  enable(@Param('id') id: number) {
+  @ApiOperation({
+    summary: 'to undo soft delete action for a category',
+  })
+  undoDelete(@Param('id') id: number) {
     return this._categoryService.toggle(id, false);
   }
 }

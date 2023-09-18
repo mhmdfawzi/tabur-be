@@ -15,6 +15,7 @@ import { TransformDataInterceptor } from './interceptors/transformData.intercept
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { QueueModule } from './modules/queue/queue.module';
 import { ReservationModule } from './modules/reservation/reservation.module';
+import { LoggingInterceptor } from './interceptors/logging.interceptor';
 @Module({
   imports: [
     UserModule,
@@ -39,6 +40,10 @@ import { ReservationModule } from './modules/reservation/reservation.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: TransformDataInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
     },
   ],
 })

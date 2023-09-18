@@ -1,11 +1,12 @@
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { QueueDto } from 'src/dtos/queueDto';
 import { Queue } from 'src/entities/queue.entity';
 import { Repository } from 'typeorm';
 import { CreateQueueDto } from '../../dtos/queueDto';
+import { ReservationService } from '../reservation/reservation.service';
 
 @Injectable()
 export class QueueService {
@@ -13,6 +14,8 @@ export class QueueService {
     @InjectRepository(Queue)
     private readonly queueRepo: Repository<Queue>,
     @InjectMapper() private readonly classMapper: Mapper,
+    @Inject(forwardRef(() => ReservationService))
+    private readonly _reservationService: ReservationService,
   ) {}
 
   // for client user
@@ -87,13 +90,61 @@ export class QueueService {
     return false;
   }
 
-  async toggle(id: number, isDeleted: boolean): Promise<boolean> {
+  async toggleDelete(id: number, isDeleted: boolean): Promise<boolean> {
     const provider = await this.queueRepo.findOne({ where: { id: id } });
     if (provider) {
       provider.isDeleted = isDeleted;
       const updateResult = await this.queueRepo.update(id, provider);
       if (updateResult.affected) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  async moveNext(queueId: number): Promise<boolean> {
+    const queue = await this.queueRepo.findOne({
+      where: { id: queueId },
+    });
+    // checking the queue is active to allow reservation
+    if (queue.isActive) {
+      if (queue.nowServing) {
+        await this._reservationService.makeServed(queue.nowServing);
+      }
+      const queueDtoResult = await this.getByIdWithReservations(queueId);
+
+      queueDtoResult.nowServing =
+        queueDtoResult.nowServing == 0
+          ? (queueDtoResult.nowServing = queueDtoResult.reservations.find(
+              (x) => x.isCancelled == false && x.isServed == false,
+            )?.id)
+          : queueDtoResult.nextServing; // get the current reservation id to replace queue.nowServing + 1
+
+      // check if the now serving == 0
+      if (queueDtoResult.nextServing > 0) {
+        if (queueDtoResult.waitingCount >= 1) {
+          queueDtoResult.nextServing =
+            queueDtoResult.reservations.filter(
+              (x) => x.isCancelled == false && x.isServed == false,
+            ).length > 1
+              ? queueDtoResult.reservations.filter(
+                  (x) => x.isCancelled == false && x.isServed == false,
+                )[1].id
+              : 0; // get the next reservation id
+        }
+      }
+      queueDtoResult.waitingCount =
+        queueDtoResult.waitingCount == 0 ? 0 : queueDtoResult.waitingCount - 1; // get remaining reservation counts
+
+      // update the queue info
+      if (queueDtoResult.waitingCount && queueDtoResult.nowServing) {
+        const updateResult = await this.queueRepo.update(
+          queueDtoResult.id,
+          this.classMapper.map(queueDtoResult, QueueDto, Queue),
+        );
+        if (updateResult.affected) {
+          return true;
+        }
       }
     }
     return false;
@@ -110,7 +161,7 @@ export class QueueService {
       queueDtoResult.nowServing =
         queueDtoResult.nowServing == 0
           ? (queueDtoResult.nowServing = queueDtoResult.reservations.find(
-              (x) => x.isCancelled == false,
+              (x) => x.isCancelled == false && x.isServed == false,
             )?.id)
           : queueDtoResult.nowServing; // get the current reservation id to replace queue.nowServing + 1
       // check if the now serving == 0
@@ -134,6 +185,18 @@ export class QueueService {
         queueDtoResult.id,
         this.classMapper.map(queueDtoResult, QueueDto, Queue),
       );
+      if (updateResult.affected) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async toggleActivation(id: number, isActivated: boolean): Promise<boolean> {
+    const provider = await this.queueRepo.findOne({ where: { id: id } });
+    if (provider) {
+      provider.isActive = isActivated;
+      const updateResult = await this.queueRepo.update(id, provider);
       if (updateResult.affected) {
         return true;
       }

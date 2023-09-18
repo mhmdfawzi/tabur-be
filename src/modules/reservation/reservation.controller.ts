@@ -8,7 +8,7 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
-import { ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ReservationService } from './reservation.service';
@@ -35,6 +35,9 @@ export class ReservationController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to get specific reservation info',
+  })
   getById(@Param('id') id: number) {
     return this._reservationService.getById(id);
   }
@@ -42,6 +45,9 @@ export class ReservationController {
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to create a reservation',
+  })
   create(@Body() _reservation: CreateReservationDto) {
     return this._reservationService.create(_reservation);
   }
@@ -56,6 +62,10 @@ export class ReservationController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to cancel a reservation',
+  })
+  @Public()
   delete(@Param('id') id: number) {
     return this._reservationService.toggle(id, true);
   }

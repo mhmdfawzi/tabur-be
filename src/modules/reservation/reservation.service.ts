@@ -1,6 +1,12 @@
 import { Mapper } from '@automapper/core';
 import { InjectMapper } from '@automapper/nestjs';
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+  forwardRef,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ReservationDto } from 'src/dtos/reservationDto';
 import { Reservation } from 'src/entities/reservation.entity';
@@ -15,7 +21,7 @@ export class ReservationService {
     private readonly reservationRepo: Repository<Reservation>,
     @InjectMapper() private readonly classMapper: Mapper,
 
-    @Inject(QueueService)
+    @Inject(forwardRef(() => QueueService))
     private readonly _queueService: QueueService,
   ) {}
 
@@ -106,6 +112,18 @@ export class ReservationService {
       if (updateResult.affected) {
         return true;
       }
+    }
+    return false;
+  }
+
+  async makeServed(id: number): Promise<boolean> {
+    const reservation = await this.reservationRepo.findOne({
+      where: { id: id },
+    });
+    reservation.isServed = true;
+    const updateResult = await this.reservationRepo.update(id, reservation);
+    if (updateResult.affected) {
+      return true;
     }
     return false;
   }
