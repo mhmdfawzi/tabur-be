@@ -12,6 +12,7 @@ import { User } from './user.entity';
 import { Category } from './category.entity';
 import { AutoMap } from '@automapper/classes';
 import { Queue } from './queue.entity';
+import { QueueType } from 'src/enums/queueType.enum';
 
 @Entity()
 export class Provider {
@@ -95,4 +96,8 @@ export class Provider {
 
   @OneToMany(() => Queue, (queue) => queue.serviceProvider)
   queues: Queue[];
+
+  @AutoMap()
+  @Column({ nullable: false, default: QueueType.Normal })
+  type: QueueType;
 }
