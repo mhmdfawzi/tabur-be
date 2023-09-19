@@ -72,6 +72,7 @@ export class AuthController {
   }
 
   @Post('register/admin')
+  @Public()
   @ApiOperation({ summary: 'to add an admin user' })
   @ApiBody({ type: CreateUserDto, required: true })
   async registerAdminUser(@Body() createUserDto: CreateUserDto) {
