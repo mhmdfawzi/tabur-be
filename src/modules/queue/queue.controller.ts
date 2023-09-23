@@ -59,6 +59,21 @@ export class QueueController {
     return this._queueService.getByIdWithReservations(id);
   }
 
+  @Get('/manager/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-auth')
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'the manager id',
+  })
+  @ApiOperation({
+    summary: 'to get the manager queue details with the reservations',
+  })
+  getByManagerIdWithReservations(@Param('id') id: number) {
+    return this._queueService.getByManagerIdWithReservations(id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')

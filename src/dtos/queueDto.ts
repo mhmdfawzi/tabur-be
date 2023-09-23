@@ -91,7 +91,7 @@ export class ViewQueueDto {
 
   @AutoMap()
   waitingCount: number;
-  
+
   @AutoMap()
   isActive: boolean;
 

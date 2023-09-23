@@ -68,6 +68,7 @@ export class Queue {
   manager: User;
 
   @OneToMany(() => Reservation, (reservation) => reservation.queue)
+  @JoinColumn()
   reservations: Reservation[];
 
   @BeforeInsert()

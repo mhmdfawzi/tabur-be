@@ -73,6 +73,26 @@ export class QueueService {
     );
   }
 
+  async getByManagerIdWithReservations(id: number): Promise<QueueDto> {
+    const queueResult = await this.queueRepo.findOne({
+      where: {
+        manager: { id: id },
+      },
+    });
+    const queueDTO = await this.classMapper.mapAsync(
+      queueResult,
+      Queue,
+      QueueDto,
+    );
+    if (queueResult) {
+      const reservationsResult = await this._reservationService.getByQueueId(
+        queueResult.id,
+      );
+      queueDTO.reservations = reservationsResult;
+    }
+    return queueDTO;
+  }
+
   async create(provider: CreateQueueDto): Promise<QueueDto> {
     const entity = this.classMapper.map(provider, CreateQueueDto, Queue);
     return this.classMapper.mapAsync(
@@ -112,7 +132,6 @@ export class QueueService {
         await this._reservationService.makeServed(queue.nowServing);
       }
       const queueDtoResult = await this.getByIdWithReservations(queueId);
-
       queueDtoResult.nowServing =
         queueDtoResult.nowServing == 0
           ? (queueDtoResult.nowServing = queueDtoResult.reservations.find(
@@ -137,15 +156,15 @@ export class QueueService {
         queueDtoResult.waitingCount == 0 ? 0 : queueDtoResult.waitingCount - 1; // get remaining reservation counts
 
       // update the queue info
-      if (queueDtoResult.waitingCount && queueDtoResult.nowServing) {
-        const updateResult = await this.queueRepo.update(
-          queueDtoResult.id,
-          this.classMapper.map(queueDtoResult, QueueDto, Queue),
-        );
-        if (updateResult.affected) {
-          return true;
-        }
+      // if (queueDtoResult.waitingCount && queueDtoResult.nowServing) {
+      const updateResult = await this.queueRepo.update(
+        queueDtoResult.id,
+        this.classMapper.map(queueDtoResult, QueueDto, Queue),
+      );
+      if (updateResult.affected) {
+        return true;
       }
+      // }
     }
     return false;
   }

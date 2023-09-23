@@ -12,7 +12,10 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     console.log(process.env.npm_lifecycle_event);
-    if (process.env.npm_lifecycle_event === 'start:dev') {
+    if (
+      process.env.npm_lifecycle_event === 'start:dev' ||
+      process.env.npm_lifecycle_event === 'start:debug'
+    ) {
       return {
         type: 'postgres',
         database: 'testDB',

@@ -127,4 +127,17 @@ export class ReservationService {
     }
     return false;
   }
+
+  async getByQueueId(id: number): Promise<ReservationDto[]> {
+    return await this.classMapper.mapArrayAsync(
+      await this.reservationRepo.find({
+        where: { isCancelled: false, isServed: false, queue: { id: id } },
+        relations: {
+          reserver: true,
+        },
+      }),
+      Reservation,
+      ReservationDto,
+    );
+  }
 }
