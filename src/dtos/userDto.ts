@@ -1,4 +1,4 @@
-import { IsPhoneNumber, IsString, IsEmail } from 'class-validator';
+import { IsPhoneNumber, IsString, IsEmail, IsPositive } from 'class-validator';
 // import { RoleDto } from './roleDto';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -15,6 +15,24 @@ export class CreateUserDto {
   @ApiProperty()
   @IsPhoneNumber()
   phone: string;
+}
+
+export class CreateProviderUserDto {
+  @IsString()
+  @ApiProperty()
+  name: string;
+  @IsEmail()
+  @ApiProperty()
+  email: string;
+  @IsString()
+  @ApiProperty()
+  password: string;
+  @ApiProperty()
+  @IsPhoneNumber()
+  phone: string;
+  @ApiProperty()
+  @IsPositive()
+  providerId: number;
 }
 
 export class UserDto {

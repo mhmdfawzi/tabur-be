@@ -104,4 +104,18 @@ export class ProviderService {
       ProviderWithQueuesDto,
     );
   }
+
+  // get service provider queues by owner id
+  async getProviderQueuesByOwnerId(id: number): Promise<ProviderViewDto> {
+    return await this.classMapper.mapAsync(
+      await this.providerRepo.findOne({
+        where: { owner: { id: id } },
+        relations: {
+          queues: { manager: true },
+        },
+      }),
+      Provider,
+      ProviderViewDto,
+    );
+  }
 }

@@ -25,6 +25,20 @@ export class UserController {
     return this.userService.findUsers();
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('/all/managers/:providerId')
+  @ApiSecurity('JWT-auth')
+  getAllManagersByProviderId(@Param('providerId') providerId: number) {
+    return this.userService.findManagersByProviderId(providerId);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/free/managers/:providerId')
+  @ApiSecurity('JWT-auth')
+  getFreeManagersByProviderId(@Param('providerId') providerId: number) {
+    return this.userService.findFreeManagersByProviderId(providerId);
+  }
+
   @Get(':id')
   getById(@Param('id') id: number) {
     return this.userService.findOne(id);

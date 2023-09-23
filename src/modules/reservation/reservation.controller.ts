@@ -8,7 +8,7 @@ import {
   Body,
   UseGuards,
 } from '@nestjs/common';
-import { ApiOperation, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ReservationService } from './reservation.service';
@@ -40,6 +40,21 @@ export class ReservationController {
   })
   getById(@Param('id') id: number) {
     return this._reservationService.getById(id);
+  }
+
+  @Get('/reserver/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to all reservations for a reserver by the id of reserver',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'the reserver id',
+  })
+  getByReserverId(@Param('id') id: number) {
+    return this._reservationService.getByReserverId(id);
   }
 
   @Post()

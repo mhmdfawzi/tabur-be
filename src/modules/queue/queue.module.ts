@@ -6,11 +6,13 @@ import { Queue } from 'src/entities/queue.entity';
 import { QueueController } from './queue.controller';
 import { QueueProfileMapper } from './queueProfileMapper';
 import { ReservationModule } from '../reservation/reservation.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Queue]),
     forwardRef(() => ReservationModule),
+    forwardRef(() => UserModule),
   ],
   controllers: [QueueController],
   providers: [QueueService, QueueProfileMapper],

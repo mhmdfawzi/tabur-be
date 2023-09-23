@@ -21,11 +21,12 @@ export class Reservation {
   @AutoMap()
   createdDate: Date;
 
-  @ManyToOne(() => User, (user) => user.reservation)
+  @ManyToOne(() => User)
   @JoinColumn()
   reserver: User;
 
   @Column({ nullable: false, default: false })
+  @AutoMap()
   isCancelled: boolean;
 
   @Column({ nullable: true, default: null })
@@ -37,6 +38,7 @@ export class Reservation {
   queue: Queue;
 
   @Column({ nullable: false, default: false })
+  @AutoMap()
   isServed: boolean;
 
   @BeforeInsert()

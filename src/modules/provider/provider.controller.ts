@@ -63,6 +63,21 @@ export class ProviderController {
     return this._providerService.getById(id);
   }
 
+  @Get('/owner/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiSecurity('JWT-auth')
+  @ApiOperation({
+    summary: 'to get provider details by the owner id',
+  })
+  @ApiParam({
+    name: 'id',
+    required: true,
+    description: 'the owner id',
+  })
+  getbyOwnerId(@Param('id') id: number) {
+    return this._providerService.getProviderQueuesByOwnerId(id);
+  }
+
   @Post()
   @UseGuards(JwtAuthGuard)
   @ApiSecurity('JWT-auth')

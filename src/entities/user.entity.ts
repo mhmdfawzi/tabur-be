@@ -9,7 +9,9 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { Reservation } from './reservation.entity';
+// import { Reservation } from './reservation.entity';
+import { Provider } from './provider.entity';
+import { Queue } from './queue.entity';
 // import { Role } from './role.entity';
 
 @Entity()
@@ -36,9 +38,17 @@ export class User {
   // @JoinColumn()
   // role: Role;
 
-  @ManyToOne(() => Reservation, (reservation) => reservation.reserver)
+  // @ManyToOne(() => Reservation, (reservation) => reservation.reserver)
+  // @JoinColumn()
+  // reservation: Reservation;
+
+  @ManyToOne(() => Provider, { nullable: true })
   @JoinColumn()
-  reservation: Reservation;
+  provider: Provider;
+
+  @ManyToOne(() => Queue, { nullable: true })
+  @JoinColumn()
+  queue: Queue;
 
   @BeforeInsert()
   async hashPassword() {

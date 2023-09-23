@@ -7,6 +7,7 @@ import { Queue } from 'src/entities/queue.entity';
 import { Repository } from 'typeorm';
 import { CreateQueueDto } from '../../dtos/queueDto';
 import { ReservationService } from '../reservation/reservation.service';
+import { UserService } from '../user/user.service';
 
 @Injectable()
 export class QueueService {
@@ -16,6 +17,8 @@ export class QueueService {
     @InjectMapper() private readonly classMapper: Mapper,
     @Inject(forwardRef(() => ReservationService))
     private readonly _reservationService: ReservationService,
+    @Inject(forwardRef(() => UserService))
+    private readonly _userService: UserService,
   ) {}
 
   // for client user
@@ -93,16 +96,16 @@ export class QueueService {
     return queueDTO;
   }
 
-  async create(provider: CreateQueueDto): Promise<QueueDto> {
-    const entity = this.classMapper.map(provider, CreateQueueDto, Queue);
-    return this.classMapper.mapAsync(
-      await this.queueRepo.save(entity),
-      Queue,
-      QueueDto,
-    );
+  async create(queue: CreateQueueDto): Promise<QueueDto> {
+    const entity = this.classMapper.map(queue, CreateQueueDto, Queue);
+    const saveResult = await this.queueRepo.save(entity);
+
+    await this._userService.assignManagerToQueue(queue.manager, saveResult.id);
+
+    return this.classMapper.mapAsync(saveResult, Queue, QueueDto);
   }
-  async update(id: number, provider: QueueDto): Promise<boolean> {
-    const entity = this.classMapper.map(provider, QueueDto, Queue);
+  async update(id: number, queue: QueueDto): Promise<boolean> {
+    const entity = this.classMapper.map(queue, QueueDto, Queue);
     const updateResult = await this.queueRepo.update(id, entity);
     if (updateResult.affected) {
       return true;

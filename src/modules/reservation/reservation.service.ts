@@ -65,6 +65,19 @@ export class ReservationService {
     );
   }
 
+  async getByReserverId(id: number): Promise<ReservationDto[]> {
+    return await this.classMapper.mapArrayAsync(
+      await this.reservationRepo.find({
+        where: { reserver: { id: id } },
+        relations: {
+          queue: true,
+        },
+      }),
+      Reservation,
+      ReservationDto,
+    );
+  }
+
   async create(reservation: CreateReservationDto): Promise<ReservationDto> {
     const entity = this.classMapper.map(
       reservation,

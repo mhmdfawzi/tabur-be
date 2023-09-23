@@ -9,7 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { CreateLoginDto, CreateUserDto } from 'src/dtos/userDto';
+import { CreateLoginDto, CreateProviderUserDto, CreateUserDto } from 'src/dtos/userDto';
 import { UserService } from 'src/modules/user/user.service';
 import { AuthService } from './auth.service';
 import { RefreshJwtGuard } from './guards/refresh-jwt-auth.guard';
@@ -58,7 +58,7 @@ export class AuthController {
   @Post('register/owner')
   @Public()
   @ApiOperation({ summary: 'to add an owner user' })
-  @ApiBody({ type: CreateUserDto, required: true })
+  @ApiBody({ type: CreateProviderUserDto, required: true })
   async registerOwnerUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto, UserRole.Owner);
   }
@@ -66,7 +66,7 @@ export class AuthController {
   @Post('register/manager')
   @Public()
   @ApiOperation({ summary: 'to add a manager user' })
-  @ApiBody({ type: CreateUserDto, required: true })
+  @ApiBody({ type: CreateProviderUserDto, required: true })
   async registerManagerUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto, UserRole.Manager);
   }
