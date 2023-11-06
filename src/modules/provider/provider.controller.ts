@@ -7,10 +7,17 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProviderService } from './provider.service';
 import { ProviderDto, ProviderUpdateDto } from '../../dtos/providerDto';
-import { ApiOperation, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -24,8 +31,13 @@ export class ProviderController {
   @ApiOperation({
     summary: 'to get all available providers for the customer/client',
   })
-  list() {
-    return this._providerService.list();
+  @ApiQuery({
+    name: 'categoryId',
+    required: false,
+    description: 'the category id',
+  })
+  list(@Query('categoryId') categoryId?: number) {
+    return this._providerService.list(categoryId);
   }
 
   @Get(':id/queues')

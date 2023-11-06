@@ -20,10 +20,10 @@ export class ProviderService {
   ) {}
 
   // for client user
-  async list(): Promise<ProviderViewDto[]> {
+  async list(categoryId?: number): Promise<ProviderViewDto[]> {
     return await this.classMapper.mapArrayAsync(
       await this.providerRepo.find({
-        where: { isDeleted: false },
+        where: { isDeleted: false, category: { id: categoryId } },
       }),
       Provider,
       ProviderViewDto,
