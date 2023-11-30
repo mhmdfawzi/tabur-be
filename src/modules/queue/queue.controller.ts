@@ -7,8 +7,15 @@ import {
   Param,
   Body,
   UseGuards,
+  Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiSecurity, ApiTags } from '@nestjs/swagger';
+import {
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiSecurity,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Public } from '../auth/decorators/public.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { QueueService } from './queue.service';
@@ -22,8 +29,13 @@ export class QueueController {
 
   @Get('list')
   @Public()
-  list() {
-    return this._queueService.list();
+  @ApiQuery({
+    name: 'providerId',
+    required: false,
+    description: 'the service provider id',
+  })
+  list(@Query('providerId') providerId?: number) {
+    return this._queueService.list(providerId);
   }
 
   @Get('all')

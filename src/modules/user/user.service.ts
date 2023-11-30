@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/entities/user.entity';
 import { IsNull, Repository } from 'typeorm';
 import { UserRole } from 'src/enums/userRole.enum';
+import { Queue } from 'src/entities/queue.entity';
 // import { UserRole } from 'src/enums/userRole.enum';
 // import { Role } from '../../entities/role.entity';
 
@@ -25,7 +26,12 @@ export class UserService {
         where: { role: UserRole.Manager, provider: { id: id } },
       })
     ).map((u) => {
-      return <UserDto>{ name: u.name, email: u.email, phone: u.phone };
+      return <UserDto>{
+        name: u.name,
+        email: u.email,
+        phone: u.phone,
+        id: u.id,
+      };
     });
   }
 
@@ -39,7 +45,12 @@ export class UserService {
         },
       })
     ).map((u) => {
-      return <UserDto>{ name: u.name, email: u.email, phone: u.phone };
+      return <UserDto>{
+        name: u.name,
+        email: u.email,
+        phone: u.phone,
+        id: u.id,
+      };
     });
   }
 
@@ -83,9 +94,9 @@ export class UserService {
     }
   }
 
-  async assignManagerToQueue(managerId: number, queueId: number) {
+  async assignManagerToQueue(managerId: number, queue: Queue) {
     const user = await this.userRepo.findOne({ where: { id: managerId } });
-    user.queue.id = queueId;
+    user.queue = queue;
 
     return await this.userRepo.update(managerId, user);
   }

@@ -44,6 +44,8 @@ export class UserDto {
   phone: string;
   @ApiProperty()
   role: string;
+  @ApiProperty()
+  id: number;
 }
 
 export class UpdateUserDto {

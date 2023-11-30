@@ -22,10 +22,14 @@ export class QueueService {
   ) {}
 
   // for client user
-  async list(): Promise<QueueDto[]> {
+  async list(providerId?: number): Promise<QueueDto[]> {
     return await this.classMapper.mapArrayAsync(
       await this.queueRepo.find({
-        where: { isDeleted: false },
+        where: {
+          isDeleted: false,
+          serviceProvider: { id: providerId },
+          isActive: true,
+        },
       }),
       Queue,
       QueueDto,
@@ -100,7 +104,7 @@ export class QueueService {
     const entity = this.classMapper.map(queue, CreateQueueDto, Queue);
     const saveResult = await this.queueRepo.save(entity);
 
-    await this._userService.assignManagerToQueue(queue.manager, saveResult.id);
+    await this._userService.assignManagerToQueue(queue.manager, saveResult);
 
     return this.classMapper.mapAsync(saveResult, Queue, QueueDto);
   }
