@@ -25,6 +25,13 @@ export class ReservationDto {
 
   @AutoMap()
   isServed: boolean;
+
+  @AutoMap()
+  number: number;
+}
+
+export class ReservationViewDto extends ReservationDto {
+  waitingCount: number;
 }
 
 export class CreateReservationDto {

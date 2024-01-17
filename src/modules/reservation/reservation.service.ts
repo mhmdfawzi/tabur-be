@@ -8,7 +8,7 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ReservationDto } from 'src/dtos/reservationDto';
+import { ReservationDto, ReservationViewDto } from 'src/dtos/reservationDto';
 import { Reservation } from 'src/entities/reservation.entity';
 import { Repository } from 'typeorm';
 import { CreateReservationDto } from '../../dtos/reservationDto';
@@ -51,8 +51,8 @@ export class ReservationService {
     );
   }
 
-  async getById(id: number): Promise<ReservationDto> {
-    return await this.classMapper.mapAsync(
+  async getById(id: number): Promise<ReservationViewDto> {
+    const reservation = await this.classMapper.mapAsync(
       await this.reservationRepo.findOne({
         where: { id: id },
         relations: {
@@ -63,6 +63,16 @@ export class ReservationService {
       Reservation,
       ReservationDto,
     );
+    // setting the waiting numbers in the queue
+    const waitingNumber = await this.reservationRepo.count({
+      where: {
+        queue: { id: reservation.queue.id },
+        isServed: false,
+        isCancelled: false,
+      },
+    });
+
+    return { ...reservation, waitingCount: waitingNumber };
   }
 
   async getByReserverId(id: number): Promise<ReservationDto[]> {
@@ -78,13 +88,33 @@ export class ReservationService {
     );
   }
 
-  async create(reservation: CreateReservationDto): Promise<ReservationDto> {
+  async create(reservation: CreateReservationDto): Promise<ReservationViewDto> {
     const entity = this.classMapper.map(
       reservation,
       CreateReservationDto,
       Reservation,
     );
-    const reservationResult = this.classMapper.mapAsync(
+
+    // setting the reservation number depending on the last reserved one
+    const lastReservation = await this.reservationRepo.findOne({
+      where: {
+        queue: { id: reservation.queueId },
+      },
+      order: { id: 'DESC' },
+    });
+
+    // setting the waiting numbers in the queue
+    const waitingNumber = await this.reservationRepo.count({
+      where: {
+        queue: { id: reservation.queueId },
+        isServed: false,
+        isCancelled: false,
+      },
+    });
+
+    entity.number = lastReservation != null ? lastReservation.number + 1 : 1;
+
+    const reservationResult = await this.classMapper.mapAsync(
       await this.reservationRepo.save(entity),
       Reservation,
       ReservationDto,
@@ -93,7 +123,7 @@ export class ReservationService {
       reservation.queueId,
     );
     if (queueResult) {
-      return reservationResult;
+      return { ...reservationResult, waitingCount: waitingNumber };
     } else {
       await this.reservationRepo.delete((await reservationResult).id);
       throw new HttpException(

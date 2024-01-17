@@ -23,6 +23,8 @@ export class ReservationProfileMapper extends AutomapperProfile {
         mapper,
         Reservation,
         ReservationDto,
+        // forMember((destination) => destination.number, ignore()),
+        // forMember((destination) => destination.waitingNumber, ignore()),
         // forMember((dest) => dest.id, ignore()),
         forMember(
           (destination) => destination.queue,

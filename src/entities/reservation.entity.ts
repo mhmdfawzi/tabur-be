@@ -41,6 +41,10 @@ export class Reservation {
   @AutoMap()
   isServed: boolean;
 
+  @Column({ nullable: false })
+  @AutoMap()
+  number: number;
+
   @BeforeInsert()
   async setCreatedDate() {
     this.createdDate = new Date();
