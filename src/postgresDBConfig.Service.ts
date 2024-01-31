@@ -36,7 +36,6 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
         password: this.configService.get<string>('DATABASE_PASSWORD'),
         entities: [User, Category, Provider, Queue, Reservation],
         synchronize: true,
-        retryAttempts: 10,
       };
     }
   }
