@@ -16,17 +16,17 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
       process.env.npm_lifecycle_event === 'start:dev' ||
       process.env.npm_lifecycle_event === 'start:debug'
     ) {
-      return {
-        type: 'postgres',
-        database: 'testDB',
-        host: 'localhost',
-        port: 5432,
-        username: 'postgres',
-        password: 'postgres',
-        entities: [User, Category, Provider, Queue, Reservation],
-        synchronize: true,
-      };
-    } else {
+      //   return {
+      //     type: 'postgres',
+      //     database: 'testDB',
+      //     host: 'localhost',
+      //     port: 5432,
+      //     username: 'postgres',
+      //     password: 'postgres',
+      //     entities: [User, Category, Provider, Queue, Reservation],
+      //     synchronize: true,
+      //   };
+      // } else {
       return {
         type: 'postgres',
         database: this.configService.get<string>('DATABASE_NAME'),
@@ -36,6 +36,7 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
         password: this.configService.get<string>('DATABASE_PASSWORD'),
         entities: [User, Category, Provider, Queue, Reservation],
         synchronize: true,
+        retryAttempts: 10,
       };
     }
   }
