@@ -12,31 +12,31 @@ export class PostgresDBConfigService implements TypeOrmOptionsFactory {
 
   createTypeOrmOptions(): TypeOrmModuleOptions {
     console.log(process.env.npm_lifecycle_event);
-    // if (
-    //   process.env.npm_lifecycle_event === 'start:dev' ||
-    //   process.env.npm_lifecycle_event === 'start:debug'
-    // ) {
-    //   return {
-    //     type: 'postgres',
-    //     database: 'testDB',
-    //     host: 'localhost',
-    //     port: 5432,
-    //     username: 'postgres',
-    //     password: 'postgres',
-    //     entities: [User, Category, Provider, Queue, Reservation],
-    //     synchronize: true,
-    //   };
-    // } else {
-    return {
-      type: 'postgres',
-      database: this.configService.get<string>('DATABASE_NAME'),
-      host: this.configService.get<string>('DATABASE_HOST'),
-      port: this.configService.get<number>('DATABASE_PORT'),
-      username: this.configService.get<string>('DATABASE_USERNAME'),
-      password: this.configService.get<string>('DATABASE_PASSWORD'),
-      entities: [User, Category, Provider, Queue, Reservation],
-      synchronize: true,
-    };
-    // }
+    if (
+      process.env.npm_lifecycle_event === 'start:dev' ||
+      process.env.npm_lifecycle_event === 'start:debug'
+    ) {
+      return {
+        type: 'postgres',
+        database: 'testDB',
+        host: 'localhost',
+        port: 5432,
+        username: 'postgres',
+        password: 'postgres',
+        entities: [User, Category, Provider, Queue, Reservation],
+        synchronize: true,
+      };
+    } else {
+      return {
+        type: 'postgres',
+        database: this.configService.get<string>('DATABASE_NAME'),
+        host: this.configService.get<string>('DATABASE_HOST'),
+        port: this.configService.get<number>('DATABASE_PORT'),
+        username: this.configService.get<string>('DATABASE_USERNAME'),
+        password: this.configService.get<string>('DATABASE_PASSWORD'),
+        entities: [User, Category, Provider, Queue, Reservation],
+        synchronize: true,
+      };
+    }
   }
 }
